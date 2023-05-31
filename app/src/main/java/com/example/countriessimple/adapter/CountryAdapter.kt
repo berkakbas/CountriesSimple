@@ -37,4 +37,10 @@ class CountryAdapter(val countryList: ArrayList<Country>) : RecyclerView.Adapter
             holder.view.findNavController().navigate(R.id.action_feedFragment_to_countryDetailsFragment)
         }
     }
+
+    fun updateCountryList(newCountryList: List<Country>) {
+        countryList.clear()
+        countryList.addAll(newCountryList)
+        notifyDataSetChanged()
+    }
 }
