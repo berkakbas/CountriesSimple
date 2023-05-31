@@ -9,6 +9,8 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.countriessimple.R
 import com.example.countriessimple.model.Country
+import com.example.countriessimple.util.bindImage
+import com.example.countriessimple.util.placeholderProgressBar
 
 class CountryAdapter(val countryList: ArrayList<Country>) : RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
 
@@ -33,6 +35,7 @@ class CountryAdapter(val countryList: ArrayList<Country>) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
         holder.name.text = countryList[position].countryName
+        holder.image.bindImage(countryList[position].imageUrl, placeholderProgressBar(holder.view.context))
         holder.view.setOnClickListener {
             holder.view.findNavController().navigate(R.id.action_feedFragment_to_countryDetailsFragment)
         }
