@@ -1,6 +1,7 @@
 package com.example.countriessimple.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +11,13 @@ import com.example.countriessimple.service.CountryAPI
 import com.example.countriessimple.service.CountryDatabase
 import kotlinx.coroutines.launch
 
+
 class FeedViewModel(application: Application) : AndroidViewModel(application) {
+    private val UPDATE_TIME = "update_time"
+    private val sharedPref = application.getSharedPreferences("time", Context.MODE_PRIVATE)
+    private val editor = sharedPref.edit()
+    private var refreshTime = 0.1 * 60 * 1000 * 1000 * 1000L //5 mins
+
     private val _countries = MutableLiveData<List<Country>>()
     val countries: LiveData<List<Country>> = _countries
 
@@ -22,8 +29,14 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
 
     val countryApi = CountryAPI.retrofitService
 
-    fun refreshDataFromDB() {
-        getDataFromSQLite()
+    fun refreshData() {
+        val lastUpdateTime = sharedPref.getLong(UPDATE_TIME, 0)
+
+        if (System.nanoTime() - lastUpdateTime > refreshTime) {
+            getDataFromAPI()
+        } else {
+            getDataFromSQLite()
+        }
     }
 
     fun getDataFromAPI() {
@@ -61,6 +74,8 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
             }
             showCountries(list)
         }
+        editor.putLong(UPDATE_TIME, System.nanoTime())
+        editor.commit()
     }
 
     private fun showCountries(countryList: List<Country>) {
