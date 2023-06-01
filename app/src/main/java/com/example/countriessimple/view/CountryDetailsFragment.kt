@@ -35,8 +35,7 @@ class CountryDetailsFragment : Fragment() {
     }
     private fun observeLiveData() {
         viewModel.country.observe(viewLifecycleOwner) { country ->
-            binding.countryNameTextView.text = country.countryName
-            binding.countryFlagImageView.bindImage(country.imageUrl, placeholderProgressBar(requireContext()))
+            binding.selectedCountry = country
         }
     }
 }
